@@ -91,10 +91,11 @@ end
 contents.rewind # rewind pointer to begin of file
 
 best_hours = find_best_hour(contents)
-puts (best_hours.size == 1 ? 'The hour with the most registrations is: ' : 'The hours with the most registrations are: ').to_s
+hour_size = best_hours.size
+puts (hour_size == 1 ? 'The hour with the most registrations is: ' : 'The hours with the most registrations are: ').to_s
 best_hours.each { |k,| puts k }
 
 best_days = find_best_days(contents)
-puts best_days
-puts (best_days.size == 1 ? 'The day with the most registrations is: ' : 'The days with the most registrations are: ').to_s
+days_size = best_days.size
+puts (days_size == 1 ? 'The day with the most registrations is: ' : 'The days with the most registrations are: ').to_s
 best_days.each { |k,| puts k }
