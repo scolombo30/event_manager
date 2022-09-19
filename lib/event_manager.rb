@@ -44,24 +44,22 @@ def save_thank_you_letter(id, form_letter)
 end
 
 def find_best_hour(contents)
-  hours = contents.reduce(Hash.new(0)) do |hash, row|
+  hours = contents.each_with_object(Hash.new(0)) do |row, hash|
     hour = Time.parse(row[:regdate].split(' ')[1]).hour.to_s
     hash[hour] += 1
-    hash
   end
   contents.rewind # rewind pointer to begin of file
-  hours.select { |k, v| v == hours.values.max }
+  hours.select { |_k, v| v == hours.values.max }
 end
 
 def find_best_days(contents)
-  days = contents.reduce(Hash.new(0)) do |hash, row|
+  days = contents.each_with_object(Hash.new(0)) do |row, hash|
     date = (row[:regdate].split(' ')[0]).split('/').rotate(-1).reverse.join('-')
     day = Date.parse(date).strftime('%A')
     hash[day] += 1
-    hash
   end
   contents.rewind # rewind pointer to begin of file
-  days.select { |k, v| v == days.values.max }
+  days.select { |_k, v| v == days.values.max }
 end
 
 puts 'Event Manager Initialized!'
@@ -93,10 +91,10 @@ end
 contents.rewind # rewind pointer to begin of file
 
 best_hours = find_best_hour(contents)
-puts "#{best_hours.size == 1 ? 'The hour with the most registrations is: ' : 'The hours with the most registrations are: '}"
+puts (best_hours.size == 1 ? 'The hour with the most registrations is: ' : 'The hours with the most registrations are: ').to_s
 best_hours.each { |k,| puts k }
 
 best_days = find_best_days(contents)
 puts best_days
-puts "#{best_days.size == 1 ? 'The day with the most registrations is: ' : 'The days with the most registrations are: '}"
+puts (best_days.size == 1 ? 'The day with the most registrations is: ' : 'The days with the most registrations are: ').to_s
 best_days.each { |k,| puts k }
