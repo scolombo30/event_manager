@@ -3,6 +3,7 @@
 require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
+require 'time'
 
 def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5, '0')[0..4]
@@ -43,10 +44,13 @@ def save_thank_you_letter(id, form_letter)
 end
 
 def find_best_hour(contents)
-  contents.each do |row|
-    date = row[:regdate]
-    puts date
+  hours = contents.reduce(Hash.new(0)) do |hash, row|
+    hour = Time.parse(row[:regdate].split(' ')[1]).hour.to_s
+    hash[hour] += 1
+    hash
   end
+  contents.rewind # rewind pointer to begin of file
+  hours.select { |k, v| v == hours.values.max }
 end
 
 puts 'Event Manager Initialized!'
@@ -74,3 +78,10 @@ contents.each do |row|
 
   puts "#{id} #{name} #{zipcode} #{phone_number}"
 end
+
+contents.rewind # rewind pointer to begin of file
+
+best_hours = find_best_hour(contents)
+puts best_hours
+puts "#{best_hours.size == 1 ? 'The hour with the most registrations is: ' : 'The hours with the most registrations are: '}"
+best_hours.each { |k, v| puts k }
