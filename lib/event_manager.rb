@@ -53,6 +53,17 @@ def find_best_hour(contents)
   hours.select { |k, v| v == hours.values.max }
 end
 
+def find_best_days(contents)
+  days = contents.reduce(Hash.new(0)) do |hash, row|
+    date = (row[:regdate].split(' ')[0]).split('/').rotate(-1).reverse.join('-')
+    day = Date.parse(date).strftime('%A')
+    hash[day] += 1
+    hash
+  end
+  contents.rewind # rewind pointer to begin of file
+  days.select { |k, v| v == days.values.max }
+end
+
 puts 'Event Manager Initialized!'
 
 contents = CSV.open(
@@ -82,6 +93,10 @@ end
 contents.rewind # rewind pointer to begin of file
 
 best_hours = find_best_hour(contents)
-puts best_hours
 puts "#{best_hours.size == 1 ? 'The hour with the most registrations is: ' : 'The hours with the most registrations are: '}"
-best_hours.each { |k, v| puts k }
+best_hours.each { |k,| puts k }
+
+best_days = find_best_days(contents)
+puts best_days
+puts "#{best_days.size == 1 ? 'The day with the most registrations is: ' : 'The days with the most registrations are: '}"
+best_days.each { |k,| puts k }
